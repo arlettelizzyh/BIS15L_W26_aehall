@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2026-01-03" />
+<meta name="date" content="2026-01-07" />
 
 <title>Lab 2.1</title>
 
@@ -1503,7 +1503,7 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">Lab 2.1</h1>
-<h4 class="date">2026-01-03</h4>
+<h4 class="date">2026-01-07</h4>
 
 </div>
 
@@ -1517,6 +1517,29 @@ border-radius: 0px;
 4. Use R to identify the class of specific data.<br />
 5. Define NA in R.<br />
 6. Determine whether or not data have NA values.</p>
+</div>
+<div id="working-directories-and-paths" class="section level2">
+<h2>Working Directories and Paths</h2>
+<p>Before we get started with R, it is important to understand the
+concept of working directories and paths. A working directory is the
+folder on your computer where R will look for files to read in and where
+it will save files that you create. You can check your current working
+directory using the <code>getwd()</code> function.</p>
+<p>What if you find that you are not in the correct working directory?
+You can change your working directory in two ways. The first is to look
+at the Session menu at the top of RStudio. Click on Session -&gt; Set
+Working Directory -&gt; Choose Directory. Then navigate to the folder
+you want to use as your working directory.</p>
+<p>The second way is to use the <code>setwd()</code> function. You will
+need to provide the full path to the folder you want to use. For
+example:</p>
+<pre class="r"><code>#setwd(&quot;/Users/yourname/Documents/yourfolder&quot;) #uncomment and change to your path</code></pre>
+<p>What is a path? A path is the location of a file or folder on your
+computer. It tells R where to find files to read in or where to save
+files you create. Paths can be absolute or relative. An absolute path
+provides the full location of a file or folder, starting from the root
+directory. A relative path provides the location of a file or folder in
+relation to the current working directory.</p>
 </div>
 <div id="objects" class="section level2">
 <h2>Objects</h2>
@@ -1544,6 +1567,7 @@ I give a new object the same name as an existing object, the old one is
 replaced.</p>
 <p>To learn more about the sum function, use the help command
 <code>?</code>.</p>
+<pre class="r"><code>?sum</code></pre>
 </div>
 <div id="nomenclature" class="section level2">
 <h2>Nomenclature</h2>
@@ -1558,12 +1582,12 @@ functions; i.e. you can assign a value to ‘mean’ but this could become
 confusing because mean is also a function.</p>
 <p>What is the mean of 2+8+2? (Do the math in your head first). Does the
 following code match your prediction?</p>
-<pre class="r"><code>2+8+2/3</code></pre>
-<pre><code>## [1] 10.66667</code></pre>
 <p>Order of operations applies, so we need to tell R exactly what we
 want.</p>
 <p>Here we use the mean function. Notice that we use <code>c</code>
-which stands for concatenate. More on this later.</p>
+which stands for concatenate. This combines the three numbers into a
+single object that the mean function can use. This type of data
+structure is called a vector.</p>
 <p>Why does this not work?</p>
 </div>
 <div id="practice" class="section level2">
@@ -1607,16 +1631,19 @@ data.</p>
 <div id="practice-1" class="section level2">
 <h2>Practice</h2>
 <ol style="list-style-type: decimal">
-<li><p>Let’s create a vector that includes some missing data (we will
-discuss vectors more in part 2). For now, run the following code
-chunk.</p></li>
+<li>Let’s create a vector that includes some missing data. For now, run
+the following code chunk.</li>
+</ol>
+<pre class="r"><code>new_vector &lt;- c(7, 6.2, 5, 9, NA, 4, 9.8, 7, 3, 2)</code></pre>
+<ol start="2" style="list-style-type: decimal">
 <li><p>Calculate the mean of <code>new_vector</code>.</p></li>
 <li><p>How do you interpret this result? What does this mean about
 NAs?</p></li>
 <li><p>Recalculate the mean using the following code chunk. Why is the
 useful?</p></li>
 </ol>
-<p>–&gt;<a href="https://jmledford3115.github.io/datascibiol/">Home</a></p>
+<pre class="r"><code>mean(new_vector, na.rm = TRUE) #removes NA values</code></pre>
+<pre><code>## [1] 5.888889</code></pre>
 </div>
 
 
