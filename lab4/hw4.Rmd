@@ -19,24 +19,89 @@ options(scipen = 999) #disable scientific notation
 For this homework, we will be using the `msleep` dataset from the `ggplot2` package. This dataset contains information about the sleep habits of various mammals. [Reference](https://ggplot2.tidyverse.org/reference/msleep.html): V. M. Savage and G. B. West. A quantitative, theoretical framework for understanding mammalian sleep. Proceedings of the National Academy of Sciences, 104 (3):1051-1056, 2007.
 
 **1. Use a summary function of your choice to get an idea of the structure of the msleep data.**
+```{r}
+str(msleep) #check dimensions, col names, data types in msleep dataset
+```
 
 **2. What are the names of the variables? To get a better idea of what the variables mean, you can use `?msleep`.**
+```{r}
+names(msleep) #view variable names in msleep dataset
+```
 
 **3. Make a plot that shows the number of mammals in each vore type. Which vore type is most represented in the data?**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=vore))+
+  geom_bar()+
+  labs(x = "Vore Type", y = "Number of", title = "Count of each Vore Type")
+#herbi (herbivore) is most represented in the data
+```
 
 **4. What is the average length of time that each mammal sleeps?**
+```{r}
+avg_sleep <- mean(msleep$sleep_total)
+avg_sleep
+```
 
 **5. Use `summary()` to get a quick idea of the range of values for the variable `bodywt`.**
-
+```{r}
+summary(msleep$bodywt)
+```
 **6. Build a plot that shows the range of `bodywt.` by vore type. Because the range of `bodywt` is so variable, you will need to scale the y-axis. You do this by adding `scale_y_log10()` as another layer.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=vore, y=bodywt))+
+  geom_point(na.rm=T)+
+  labs(x = "Vore Type", y = "Body Weight (kg)", title = "Vore Type vs Body Weight")+
+  scale_y_log10(
+    limits = c(0.001, 7000)
+  )
+```
 
 **7. Is there a relationship between body weight and total sleep time? Add appropriate labels and a title to your plot.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=bodywt, y=sleep_total))+
+  geom_point(na.rm=T)+
+  labs(x = "Body Weight (kg)", y = "Total Sleep (hr)", title = "Body Weight vs Total Sleep")
+
+#Not seeing a relationship between body weight and total sleep time.
+```
+
 
 **8. Which vore type tends to sleep the most? Build a plot to support your answer.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=vore, y=sleep_total))+
+  geom_point(na.rm=T)+
+  labs(x = "Vore Type", y = "Total Sleep (hr)", title = "Vore Type vs Total Sleep")
+
+#Omni or Insecti tend to sleep the most.
+```
+
 
 **9. Is there a relationship between brain weight and body weight? Build a plot to support your answer.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=brainwt, y=bodywt))+
+  geom_point(na.rm=T)+
+  labs(x = "Brain Weight (kg)", y = "Body Weight (kg)", title = "Brain Weight vs Body Weight")
+
+#There seems to be a slight relationship between brain weight & body weight.
+#As the body weight increases, so does the brain weight (sometimes).
+```
+
 
 **10. Build one plot of your choice that provides additional insight into the msleep dataset. Be sure to include appropriate labels and a title.**
+```{r}
+ggplot(data=msleep,
+       mapping=aes(x=sleep_cycle, y=sleep_rem))+
+  geom_point(na.rm=T)+
+  labs(x = "Sleep Cycle (hr)", y = "Rem Sleep (hr)", title = "Sleep Cycle vs Rem Sleep")
+
+#No outright relationship between length of sleep cycle and length of rem sleep (unexpected).
+```
+
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean!  
