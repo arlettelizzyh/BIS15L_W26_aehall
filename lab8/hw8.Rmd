@@ -48,23 +48,22 @@ glimpse(fisheries_clean) #check work
 4. How many countries are represented in the data?
 ```{r}
 fisheries_clean %>%
-  summarize(no_countries=n_distinct(country))
-
+  summarize(n_countries=n_distinct(country))
 #There are 249 countries in the data.
 ```
 
 5. The variables `common_name` and `taxonomic_code` both refer to species. How many unique species are represented in the data based on each of these variables? Are the numbers the same or different?
 ```{r}
 fisheries_clean %>%
-  summarize(no_species=n_distinct(common_name))
+  summarize(n_species=n_distinct(common_name))
 #There are 3,390 species when using common_name variable.
 ```
 
 ```{r}
 fisheries_clean %>%
-  summarize(no_species=n_distinct(taxonomic_code))
+  summarize(n_species=n_distinct(taxonomic_code))
 #There are 3,722 species when using taxonomic_code variable.
-#So, no the number of species is not the same for the two variables.
+#No, the number of species is not the same for the two variables. Common names results in a smaller number of species. This makes sense as common names can repeat (e.g. "Daddy Long Legs" refers to multiple species.)
 ```
 
 
@@ -86,6 +85,7 @@ fisheries_clean %>%
   slice_max(total_catch, n=10)
 
 #NEI stands for "Not Elsewhere Identified".
+#You need to know exactly what kinds of animals are in each group, from a wildlife management perspective. This introduces unknowns about what specifically is in each group that has NEI in its name.
 ```
 
 8. For the species that was caught the most above (not NEI), which country had the highest catch in 2023?
@@ -100,13 +100,42 @@ fisheries_clean %>%
 9. How has fishing of this species changed over the last decade (2013-2023)? Create a  plot showing total catch by year for this species.
 ```{r}
 fisheries_clean %>%
-  mutate(across(period, as.numeric)) %>%
-  filter(common_name=="Alaska pollock(=Walleye poll.)" & period>=2013)
+  mutate(period = as.numeric(as.character(period))) %>%
+  filter(common_name=="Alaska pollock(=Walleye poll.)" & (period>=2013 & period<=2023)) %>%
+  group_by(period) %>%
+  summarize(total_catch=sum(catch, na.rm=T)) %>%
+  ggplot(
+    mapping=aes(x=period, y=total_catch/1000))+
+      geom_point(na.rm=T)+
+      geom_smooth(method=lm, se=T)+
+      labs(x="Year", y="Total Catch (10^3 tonnes)", title="Alaska Pollock: Total Catch by Year")
+#Fishing has increased over the last decade for Alaska Pollock.
 ```
 
 10. Perform one exploratory analysis of your choice. Make sure to clearly state the question you are asking before writing any code.
 ```{r}
+#Which geographical region caught the most? Is this because the top country is in the top geographical region? Or are there significantly more countries in the top geographical region? Or both?
 
+fisheries_clean %>%  #top geo_regions
+  group_by(geo_region) %>%
+  summarize(total_catch=sum(catch, na.rm=T)) %>%
+  arrange(desc(total_catch))
+
+fisheries_clean %>%  #check which countries are in Eastern Asia
+  filter(geo_region=="Eastern Asia") %>%
+  distinct(country)
+
+fisheries_clean %>%  #top country
+  group_by(country) %>%
+  summarize(total_catch=sum(catch, na.rm=T)) %>%
+  arrange(desc(total_catch))
+
+fisheries_clean %>%  #check number of countries per region
+  group_by(geo_region) %>%
+  summarize(n_countries=n_distinct(country)) %>%
+  arrange(desc(n_countries))
+
+#The top geographical region is Eastern Asia. The top 2 countries are in Eastern Asia (China, Japan). Eastern Asia has fewer countries than most of the geographical regions. So, the reason for Eastern Asia being number 1 is that China and Japan are the top 2.
 ```
 
 ## Knit and Upload
