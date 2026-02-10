@@ -1,6 +1,6 @@
 ---
 title: "Homework 9"
-author: "Your Name Here"
+author: "Arlette Hall"
 date: "`r Sys.Date()`"
 output:
   html_document: 
@@ -36,8 +36,9 @@ sydneybeaches <- sydneybeaches %>%
 
 2. Are these data "tidy" per the definitions of the tidyverse? How do you know? Are they in wide or long format?
 ```{r}
-#Yes, each column is a type of variable. Each row is its own observation. Each cell is its own value.
-#It's in long format.
+#Yes, the data is tidy.
+#Each column is a type of variable. Each row is its own observation. Each cell is its own value.
+#The data's in long format.
 ```
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
@@ -70,28 +71,101 @@ sydneybeaches_long <- sydneybeaches_long %>%
 7. What is the average `enterococci_cfu_100ml` by year for each beach. Think about which data you will use- long or wide.
 ```{r}
 sydneybeaches_long %>%
-  pivot_wider(names_from = "site",
-              values_from = c(enterococci_cfu_100ml)) %>%
-  group_by(year)
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            .groups='keep')
 ```
 
 8. Make the output from question 7 easier to read by pivoting it to wide format.
 ```{r}
-
+sydneybeaches_long %>%
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            .groups='keep') %>%
+  pivot_wider(names_from = "site",
+              values_from = "avg_enterococci_cfu_100ml") %>%
+  clean_names()
 ```
 
 9. What was the most polluted beach in 2013?
 ```{r}
-
+sydneybeaches_long %>%
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            .groups='keep') %>%
+  filter(year==2013) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
 ```
 
 ```{r}
-
+#Little Bay Beach was the most polluted in 2013.
 ```
 
 10. Explore the data! Do one analysis of your choice that includes a minimum of three lines of code.  
 ```{r}
+#Is the same beach the most polluted year-to-year or does it vary?
 
+sydneybeaches_long %>% #check 2013
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2013) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+sydneybeaches_long %>% #check 2014
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2014) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+sydneybeaches_long %>% #check 2015
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2015) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+sydneybeaches_long %>% #check 2016
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2016) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+sydneybeaches_long %>% #check 2017
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2017) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+sydneybeaches_long %>% #check 2018
+  group_by(year, site) %>%
+  summarize(avg_enterococci_cfu_100ml = mean(enterococci_cfu_100ml, na.rm=T,),
+            n = n(),
+            .groups='keep') %>%
+  filter(year==2018) %>%
+  arrange(desc(avg_enterococci_cfu_100ml))
+```
+
+```{r}
+#Which beach is the most polluted varies year by year. However, Malabar Beach is number 1 for 4 out of 6 years, and never leaves the top 5.
 ```
 
 ## Knit and Upload
