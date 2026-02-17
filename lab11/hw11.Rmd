@@ -46,53 +46,172 @@ glimpse(gapminder)
 ```{r}
 gapminder %>%
   summarize(n_country=n_distinct(country))
-#195 countries are in the dataset.
+#There are 195 countries in the dataset.
 ```
 
 3. Which five countries have had the largest absolute population growth between 1925-2025? Show this as a table.
 ```{r}
 gapminder %>%
+  #use only data of interest (to avoid NA's)
   filter(year == 1925 | year == 2025) %>%
-  group_by(country)
+  group_by(country) %>%
+  select(country, year, pop) %>%
+  #rearrange data so math can be done
+  pivot_wider(names_from="year",
+              values_from="pop") %>%
+  clean_names() %>%
+  #abs_pop_growth = 2025 population - 1925 population
+  summarize(abs_pop_growth = x2025-x1925) %>%
+  #check for & handle negative values
+  mutate(abs_pop_growth = ifelse(abs_pop_growth < 0,
+                                 abs_pop_growth*(-1),
+                                 abs_pop_growth)) %>%
+  #show top 5 abs_pop_growth's
+  slice_max(abs_pop_growth, n=5)
 ```
 
 4. Make a plot that shows population growth over time for the top country you found in question #3.
 ```{r}
+library(paletteer)  #for plot themes
 
+#top country is India
+gapminder %>%
+  filter((year >= 1925 & year <= 2025) & country=="India") %>%
+  ggplot(aes(x=year, y=pop/1000000))+
+  geom_line(color="purple3")+
+  labs(x="Year",
+       y="Population (in millions)",
+       title="India: Population Growth, 1925-2025")+
+  theme_minimal()+
+  theme(plot.title=element_text(hjust=0.5, size=rel(1.3), face="bold"),
+        axis.title.x=element_text(face="bold"),
+        axis.title.y=element_text(face="bold"))+
+  scale_x_continuous(breaks=seq(1925, 2025, by=10))
 ```
 
 5. Has global life expectancy changed between 1925 and 2025? Show the min, median, mean, and max for all countries (combined) in the dataset.
 ```{r}
-
+gapminder %>%
+  filter(year==1925 | year==2025) %>%
+  group_by(year) %>%
+  summarize(global_lex_min = min(lex, na.rm=T),
+            global_lex_median = median(lex, na.rm=T),
+            global_lex_mean = mean(lex, na.rm=T),
+            global_lex_max = max(lex, na.rm=T))
+#Yes, the global life expectancy has increased considerably between 1925 & 2025.
+#The min and median are over double what they used to be. The mean is almost double.
+#The max has increased by about 33%.
 ```
 
 6. Make a plot that shows the distribution of life expectancy for all countries in 1925 and 2025 (try using `geom_density`). What do you notice about the shift in life expectancy over time?
 ```{r}
-
+gapminder %>%
+  filter(year==1925 | year==2025) %>%
+  mutate(year=factor(year)) %>%
+  ggplot(aes(x=lex, color=year, fill=year))+
+  geom_density(alpha=0.3, na.rm=T)+
+  labs(x="Life Expectancy (Yrs)", y=NULL,
+       title="Distribution of Life Expectancy, 1925 & 2025",
+       color="Year", fill="Year")+
+  theme_minimal()+
+  theme(plot.title=element_text(hjust=0.5, size=rel(1.3), face="bold"),
+        axis.title.x=element_text(face="bold"),
+        axis.title.y=element_text(face="bold"))+
+  scale_x_continuous(breaks=seq(20, 90, by=10))
+#Life expectancy shifts massively upwards.
+#The bottom of the 2025 plot overlaps with the top of the 1925 plot.
 ```
 
 7. We are interested in the relationship between per capita GDP and life expectancy; i.e. does having more money help you live longer in 2025? Show this as a plot. (Suggestion! Remove Monaco as an extreme outlier.)
 ```{r}
-
+gapminder %>%
+  filter(country != "Monaco" & year==2025) %>%
+  ggplot(aes(x=gdp/1000, y=lex))+
+  geom_point(color="turquoise", na.rm=T)+
+  geom_smooth(color="purple", method=lm, se=F)+
+  labs(x="GDP per Capita (in thousands)", y="Life Expectancy (Yrs)",
+       title="GDP per Capita vs Life Expectancy, 2025")+
+  theme_minimal()+
+  theme(plot.title=element_text(hjust=0.5, size=rel(1.3), face="bold"),
+        axis.title.x=element_text(face="bold"),
+        axis.title.y=element_text(face="bold"))+
+  scale_x_continuous(breaks=seq(0, 150, by=10))
 ```
 
 8. Which five countries have had the highest absolute GDP per capita growth over the past 50 years? Show this as a table. (Suggestion! Remove Monaco as an extreme outlier.)
 ```{r}
-
+gapminder %>%
+  #use only data of interest (to avoid NA's)
+  filter(country != "Monaco" & year %in% c(1975,2025)) %>%
+  group_by(country) %>%
+  select(country, year, gdp) %>%
+  #rearrange data so math can be done
+  pivot_wider(names_from="year",
+              values_from="gdp") %>%
+  clean_names() %>%
+  #abs_gdp_growth = 2025 gdp - 1975 gdp
+  summarize(abs_gdp_growth = x2025-x1975) %>%
+  #check for & handle negative values
+  mutate(abs_gdp_growth = ifelse(abs_gdp_growth < 0,
+                                 abs_gdp_growth*(-1),
+                                 abs_gdp_growth)) %>%
+  #show top 5 abs_gdp_growth's
+  slice_max(abs_gdp_growth, n=5)
 ```
 
 9. How does per capita GDP growth compare between these same five countries over the past 50 years? Show this as a plot.
 ```{r}
-
+gapminder %>%
+  #use only data of interest
+  filter(year %in% c(1975:2025) 
+         & country %in% c("Singapore", "Ireland", "Luxembourg", "Guyana", "Norway")) %>%
+  group_by(country) %>%
+  select(country, year, gdp) %>%
+  #plot the data by country
+  ggplot(aes(x=year, y=gdp/1000, color=country))+
+  geom_line(na.rm=T)+
+  #make plot pretty
+  labs(x="Year", y="GDP per Capita (in thousands)",
+       title="GDP per Capita, 1975-2025",
+       color="Country")+
+  theme_minimal()+
+  theme(plot.title=element_text(hjust=0.5, size=rel(1.3), face="bold"),
+        axis.title.x=element_text(face="bold"),
+        axis.title.y=element_text(face="bold"))+
+  scale_y_continuous(breaks=seq(0, 160, by=20))
 ```
 
 10. Do one analysis of your choice that includes a table and plot as outputs.
 ```{r}
-
+#Has the USA's GDP per capita increased or decreased since I was born? (1990-2025) By how much?
+gapminder %>%
+  #select only data of interest (avoid NA's)
+  filter(country == "USA" & year %in% c(1990,2025)) %>%
+  group_by(country) %>%
+  select(country, year, gdp) %>%
+  #rearrange data so math can be done
+  pivot_wider(names_from="year",
+              values_from="gdp") %>%
+  clean_names() %>%
+  #gdp_change_1990to2025 = 2025 gdp - 1990 gdp
+  summarize(gdp_change_1990to2025 = x2025-x1990)
 ```
 
 ```{r}
-
+gapminder %>%
+  #use only data of interest
+  filter(year %in% c(1990:2025) & country=="USA") %>%
+  #plot the data
+  ggplot(aes(x=year, y=gdp/1000))+
+  geom_line(color="blue", na.rm=T)+
+  #make plot pretty
+  labs(x="Year", y="GDP per Capita (in thousands of USD)",
+       title="USA: GDP per Capita, 1990-2025")+
+  theme_minimal()+
+  theme(plot.title=element_text(hjust=0.5, size=rel(1.3), face="bold"),
+        axis.title.x=element_text(face="bold"),
+        axis.title.y=element_text(face="bold"))+
+  scale_y_continuous(breaks=seq(0, 80, by=10))
 ```
 
 ## Knit and Upload
