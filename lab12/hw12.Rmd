@@ -19,7 +19,7 @@ Tyler Sousa, Andrei Graham
 https://github.com/arlettelizzyh/BIS15L_W2026_Group13
 
 3. Inside your repository, create a data folder. Inside the data folder, put copies of the candidate datasets you found along with the original articles. 
-https://github.com/arlettelizzyh/BIS15L_W2026_Group13/data
+https://github.com/arlettelizzyh/BIS15L_W2026_Group13/tree/main/data
 
 ## Knit and Upload
 Please knit your work as an .html file and upload to Canvas. Homework is due before the start of the next lab. No late work is accepted. Make sure to use the formatting conventions of RMarkdown to make your report neat and clean! 
