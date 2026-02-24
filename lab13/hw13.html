@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Your Name Here" />
+<meta name="author" content="Arlette Hall" />
 
-<meta name="date" content="2026-02-18" />
+<meta name="date" content="2026-02-24" />
 
 <title>Homework 13</title>
 
@@ -375,8 +375,8 @@ display: none;
 
 
 <h1 class="title toc-ignore">Homework 13</h1>
-<h4 class="author">Your Name Here</h4>
-<h4 class="date">2026-02-18</h4>
+<h4 class="author">Arlette Hall</h4>
+<h4 class="date">2026-02-24</h4>
 
 </div>
 
@@ -408,24 +408,418 @@ birds, mammals, and reptiles.” <em>Ecology</em>, <em>96</em>, 3109. doi:
 <pre class="r"><code>amniota &lt;- read_csv(&quot;data/amniota.csv&quot;) %&gt;% 
   clean_names()</code></pre>
 <ol style="list-style-type: decimal">
-<li><p>Do some exploratory analysis of the <code>amniota</code> data
-set. Use the function(s) of your choice. Try to get an idea of how NA’s
-are represented in the data.</p></li>
-<li><p>Make any necessary replacements in the data such that all NA’s
-appear as “NA”.</p></li>
-<li><p>How many total NA’s are in the data set? Use the package
+<li>Do some exploratory analysis of the <code>amniota</code> data set.
+Use the function(s) of your choice. Try to get an idea of how NA’s are
+represented in the data.</li>
+</ol>
+<pre class="r"><code>glimpse(amniota)</code></pre>
+<pre><code>## Rows: 21,322
+## Columns: 36
+## $ class                                 &lt;chr&gt; &quot;Aves&quot;, &quot;Aves&quot;, &quot;Aves&quot;, &quot;Aves&quot;, …
+## $ order                                 &lt;chr&gt; &quot;Accipitriformes&quot;, &quot;Accipitrifor…
+## $ family                                &lt;chr&gt; &quot;Accipitridae&quot;, &quot;Accipitridae&quot;, …
+## $ genus                                 &lt;chr&gt; &quot;Accipiter&quot;, &quot;Accipiter&quot;, &quot;Accip…
+## $ species                               &lt;chr&gt; &quot;albogularis&quot;, &quot;badius&quot;, &quot;bicolo…
+## $ subspecies                            &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ common_name                           &lt;chr&gt; &quot;Pied Goshawk&quot;, &quot;Shikra&quot;, &quot;Bicol…
+## $ female_maturity_d                     &lt;dbl&gt; -999.000, 363.468, -999.000, -99…
+## $ litter_or_clutch_size_n               &lt;dbl&gt; -999.000, 3.250, 2.700, -999.000…
+## $ litters_or_clutches_per_y             &lt;dbl&gt; -999, 1, -999, -999, 1, -999, -9…
+## $ adult_body_mass_g                     &lt;dbl&gt; 251.500, 140.000, 345.000, 142.0…
+## $ maximum_longevity_y                   &lt;dbl&gt; -999.00000, -999.00000, -999.000…
+## $ gestation_d                           &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ weaning_d                             &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ birth_or_hatching_weight_g            &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ weaning_weight_g                      &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ egg_mass_g                            &lt;dbl&gt; -999.00, 21.00, 32.00, -999.00, …
+## $ incubation_d                          &lt;dbl&gt; -999.00, 30.00, -999.00, -999.00…
+## $ fledging_age_d                        &lt;dbl&gt; -999.00, 32.00, -999.00, -999.00…
+## $ longevity_y                           &lt;dbl&gt; -999.00000, -999.00000, -999.000…
+## $ male_maturity_d                       &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ inter_litter_or_interbirth_interval_y &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ female_body_mass_g                    &lt;dbl&gt; 352.500, 168.500, 390.000, -999.…
+## $ male_body_mass_g                      &lt;dbl&gt; 223.000, 125.000, 212.000, 142.0…
+## $ no_sex_body_mass_g                    &lt;dbl&gt; -999.0, 123.0, -999.0, -999.0, -…
+## $ egg_width_mm                          &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ egg_length_mm                         &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ fledging_mass_g                       &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ adult_svl_cm                          &lt;dbl&gt; -999.00, 30.00, 39.50, -999.00, …
+## $ male_svl_cm                           &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ female_svl_cm                         &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ birth_or_hatching_svl_cm              &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ female_svl_at_maturity_cm             &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ female_body_mass_at_maturity_g        &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ no_sex_svl_cm                         &lt;dbl&gt; -999, -999, -999, -999, -999, -9…
+## $ no_sex_maturity_d                     &lt;dbl&gt; -999, -999, -999, -999, -999, -9…</code></pre>
+<pre class="r"><code>summary(amniota)</code></pre>
+<pre><code>##     class              order              family             genus          
+##  Length:21322       Length:21322       Length:21322       Length:21322      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##    species            subspecies   common_name        female_maturity_d 
+##  Length:21322       Min.   :-999   Length:21322       Min.   :-30258.7  
+##  Class :character   1st Qu.:-999   Class :character   1st Qu.:  -999.0  
+##  Mode  :character   Median :-999   Mode  :character   Median :  -999.0  
+##                     Mean   :-999                      Mean   :  -723.7  
+##                     3rd Qu.:-999                      3rd Qu.:  -999.0  
+##                     Max.   :-999                      Max.   :  9131.2  
+##  litter_or_clutch_size_n litters_or_clutches_per_y adult_body_mass_g  
+##  Min.   :-999.000        Min.   :-999.0            Min.   :     -999  
+##  1st Qu.:-999.000        1st Qu.:-999.0            1st Qu.:        4  
+##  Median :   1.692        Median :-999.0            Median :       24  
+##  Mean   :-383.909        Mean   :-766.8            Mean   :    29107  
+##  3rd Qu.:   3.200        3rd Qu.:-999.0            3rd Qu.:      135  
+##  Max.   : 156.000        Max.   :  52.0            Max.   :149000000  
+##  maximum_longevity_y  gestation_d       weaning_d     
+##  Min.   :-999.000    Min.   :-999.0   Min.   :-999.0  
+##  1st Qu.:-999.000    1st Qu.:-999.0   1st Qu.:-999.0  
+##  Median :-999.000    Median :-999.0   Median :-999.0  
+##  Mean   :-737.061    Mean   :-874.9   Mean   :-892.4  
+##  3rd Qu.:   1.083    3rd Qu.:-999.0   3rd Qu.:-999.0  
+##  Max.   : 211.000    Max.   :7396.9   Max.   :1826.2  
+##  birth_or_hatching_weight_g weaning_weight_g     egg_mass_g     
+##  Min.   :   -999.00         Min.   :    -999   Min.   :-999.00  
+##  1st Qu.:   -999.00         1st Qu.:    -999   1st Qu.:-999.00  
+##  Median :   -999.00         Median :    -999   Median :-999.00  
+##  Mean   :    -88.57         Mean   :    1116   Mean   :-739.64  
+##  3rd Qu.:   -999.00         3rd Qu.:    -999   3rd Qu.:   0.56  
+##  Max.   :2250000.00         Max.   :17000000   Max.   :1500.00  
+##   incubation_d    fledging_age_d    longevity_y       male_maturity_d 
+##  Min.   :-999.0   Min.   :-999.0   Min.   :-999.000   Min.   :-999.0  
+##  1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.000   1st Qu.:-999.0  
+##  Median :-999.0   Median :-999.0   Median :-999.000   Median :-999.0  
+##  Mean   :-820.5   Mean   :-909.4   Mean   :-737.821   Mean   :-827.8  
+##  3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:   1.042   3rd Qu.:-999.0  
+##  Max.   :1762.0   Max.   : 345.0   Max.   : 177.000   Max.   :9131.2  
+##  inter_litter_or_interbirth_interval_y female_body_mass_g  male_body_mass_g   
+##  Min.   :-999.000                      Min.   :   -999.0   Min.   :   -999.0  
+##  1st Qu.:-999.000                      1st Qu.:   -999.0   1st Qu.:   -999.0  
+##  Median :-999.000                      Median :   -999.0   Median :   -999.0  
+##  Mean   :-932.502                      Mean   :     40.6   Mean   :   1242.9  
+##  3rd Qu.:-999.000                      3rd Qu.:     14.5   3rd Qu.:     13.3  
+##  Max.   :   4.847                      Max.   :3700000.0   Max.   :4545000.0  
+##  no_sex_body_mass_g   egg_width_mm    egg_length_mm    fledging_mass_g 
+##  Min.   :     -999   Min.   :-999.0   Min.   :-999.0   Min.   :-999.0  
+##  1st Qu.:     -999   1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.0  
+##  Median :     -999   Median :-999.0   Median :-999.0   Median :-999.0  
+##  Mean   :    30689   Mean   :-970.5   Mean   :-968.9   Mean   :-984.6  
+##  3rd Qu.:       28   3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:-999.0  
+##  Max.   :136000000   Max.   : 125.0   Max.   : 455.0   Max.   :9992.0  
+##   adult_svl_cm       male_svl_cm     female_svl_cm    birth_or_hatching_svl_cm
+##  Min.   :-999.000   Min.   :-999.0   Min.   :-999.0   Min.   :-999.0          
+##  1st Qu.:-999.000   1st Qu.:-999.0   1st Qu.:-999.0   1st Qu.:-999.0          
+##  Median :-999.000   Median :-999.0   Median :-999.0   Median :-999.0          
+##  Mean   :-656.153   Mean   :-985.1   Mean   :-947.4   Mean   :-940.3          
+##  3rd Qu.:   9.499   3rd Qu.:-999.0   3rd Qu.:-999.0   3rd Qu.:-999.0          
+##  Max.   :3049.000   Max.   : 315.2   Max.   :1125.0   Max.   : 760.0          
+##  female_svl_at_maturity_cm female_body_mass_at_maturity_g no_sex_svl_cm   
+##  Min.   :-999.0            Min.   :  -999.0               Min.   :-999.0  
+##  1st Qu.:-999.0            1st Qu.:  -999.0               1st Qu.:-999.0  
+##  Median :-999.0            Median :  -999.0               Median :-999.0  
+##  Mean   :-989.4            Mean   :  -980.6               Mean   :-747.1  
+##  3rd Qu.:-999.0            3rd Qu.:  -999.0               3rd Qu.:-999.0  
+##  Max.   : 580.0            Max.   :194000.0               Max.   :3300.0  
+##  no_sex_maturity_d
+##  Min.   : -999.0  
+##  1st Qu.: -999.0  
+##  Median : -999.0  
+##  Mean   : -942.6  
+##  3rd Qu.: -999.0  
+##  Max.   :14610.0</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Make any necessary replacements in the data such that all NA’s
+appear as “NA”.</li>
+</ol>
+<pre class="r"><code>#replace -999 with NA
+amniota_no_na &lt;- amniota %&gt;%
+  replace_with_na_all(condition = ~.x %in% c(-999))</code></pre>
+<pre class="r"><code>#check for more hidden NAs in numeric variables
+amniota_no_na %&gt;%
+  select(-c(class, order, family, genus, species, subspecies, common_name)) %&gt;%
+  summary()</code></pre>
+<pre><code>##  female_maturity_d  litter_or_clutch_size_n litters_or_clutches_per_y
+##  Min.   :-30258.7   Min.   :  0.900         Min.   : 0.120           
+##  1st Qu.:   288.4   1st Qu.:  2.000         1st Qu.: 1.000           
+##  Median :   365.0   Median :  2.800         Median : 1.050           
+##  Mean   :   691.2   Mean   :  3.826         Mean   : 1.752           
+##  3rd Qu.:   819.3   3rd Qu.:  4.150         3rd Qu.: 2.000           
+##  Max.   :  9131.2   Max.   :156.000         Max.   :52.000           
+##  NA&#39;s   :17849      NA&#39;s   :8244            NA&#39;s   :16374            
+##  adult_body_mass_g   maximum_longevity_y  gestation_d        weaning_d      
+##  Min.   :        0   Min.   :  0.0833    Min.   :   5.00   Min.   :   1.94  
+##  1st Qu.:       15   1st Qu.:  6.0000    1st Qu.:  29.91   1st Qu.:  27.75  
+##  Median :       44   Median : 12.3083    Median :  63.92   Median :  51.60  
+##  Mean   :    37493   Mean   : 16.4657    Mean   : 105.28   Mean   : 113.05  
+##  3rd Qu.:      238   3rd Qu.: 22.0000    3rd Qu.: 151.88   3rd Qu.: 129.83  
+##  Max.   :149000000   Max.   :211.0000    Max.   :7396.92   Max.   :1826.25  
+##  NA&#39;s   :4645        NA&#39;s   :15822       NA&#39;s   :18926     NA&#39;s   :19279    
+##  birth_or_hatching_weight_g weaning_weight_g      egg_mass_g      
+##  Min.   :0.000e+00          Min.   :9.000e-01   Min.   :   0.218  
+##  1st Qu.:1.300e+00          1st Qu.:1.320e+01   1st Qu.:   2.100  
+##  Median :5.890e+00          Median :4.310e+01   Median :   5.100  
+##  Mean   :4.480e+03          Mean   :4.139e+04   Mean   :  22.252  
+##  3rd Qu.:4.385e+01          3rd Qu.:8.503e+02   3rd Qu.:  20.100  
+##  Max.   :2.250e+06          Max.   :1.700e+07   Max.   :1500.000  
+##  NA&#39;s   :17779              NA&#39;s   :20258       NA&#39;s   :15907     
+##   incubation_d     fledging_age_d   longevity_y       male_maturity_d  
+##  Min.   :   2.00   Min.   :  1.0   Min.   :  0.0833   Min.   :  30.44  
+##  1st Qu.:  17.00   1st Qu.: 16.5   1st Qu.:  5.5000   1st Qu.: 365.00  
+##  Median :  29.25   Median : 27.5   Median : 10.7000   Median : 365.25  
+##  Mean   :  46.67   Mean   : 36.8   Mean   : 13.5209   Mean   : 787.16  
+##  3rd Qu.:  59.50   3rd Qu.: 46.0   3rd Qu.: 18.2000   3rd Qu.: 913.00  
+##  Max.   :1762.00   Max.   :345.0   Max.   :177.0000   Max.   :9131.25  
+##  NA&#39;s   :17682     NA&#39;s   :19478   NA&#39;s   :15822      NA&#39;s   :19278    
+##  inter_litter_or_interbirth_interval_y female_body_mass_g  male_body_mass_g   
+##  Min.   :0.0465                        Min.   :      0.3   Min.   :      0.3  
+##  1st Qu.:0.3184                        1st Qu.:     14.0   1st Qu.:     16.5  
+##  Median :0.9993                        Median :     40.7   Median :     48.4  
+##  Mean   :0.9067                        Mean   :   2075.8   Mean   :   6196.8  
+##  3rd Qu.:1.0000                        3rd Qu.:    220.0   3rd Qu.:    245.5  
+##  Max.   :4.8467                        Max.   :3700000.0   Max.   :4545000.0  
+##  NA&#39;s   :19904                         NA&#39;s   :14113       NA&#39;s   :14679      
+##  no_sex_body_mass_g   egg_width_mm    egg_length_mm    fledging_mass_g  
+##  Min.   :        0   Min.   :  2.50   Min.   :  2.50   Min.   :   4.85  
+##  1st Qu.:       13   1st Qu.:  8.00   1st Qu.: 10.94   1st Qu.:  14.60  
+##  Median :       35   Median : 13.00   Median : 19.98   Median :  24.80  
+##  Mean   :    68952   Mean   : 22.99   Mean   : 36.40   Mean   : 452.27  
+##  3rd Qu.:      164   3rd Qu.: 35.90   3rd Qu.: 58.92   3rd Qu.: 107.00  
+##  Max.   :136000000   Max.   :125.00   Max.   :455.00   Max.   :9992.00  
+##  NA&#39;s   :11663       NA&#39;s   :20727    NA&#39;s   :20702    NA&#39;s   :21111    
+##   adult_svl_cm      male_svl_cm     female_svl_cm      birth_or_hatching_svl_cm
+##  Min.   :   1.79   Min.   :  1.57   Min.   :   1.800   Min.   :  0.400         
+##  1st Qu.:   9.50   1st Qu.: 21.41   1st Qu.:   5.756   1st Qu.:  2.450         
+##  Median :  18.50   Median : 35.85   Median :   8.150   Median :  3.300         
+##  Mean   :  38.20   Mean   : 50.44   Mean   :  20.609   Mean   : 12.099         
+##  3rd Qu.:  40.50   3rd Qu.: 63.39   3rd Qu.:  17.721   3rd Qu.:  5.256         
+##  Max.   :3049.00   Max.   :315.20   Max.   :1125.000   Max.   :759.999         
+##  NA&#39;s   :14274     NA&#39;s   :21040    NA&#39;s   :20242      NA&#39;s   :20085           
+##  female_svl_at_maturity_cm female_body_mass_at_maturity_g no_sex_svl_cm   
+##  Min.   :  2.85            Min.   :    30.0               Min.   :   1.7  
+##  1st Qu.:  4.90            1st Qu.:    82.5               1st Qu.:   5.7  
+##  Median :  6.00            Median : 97050.0               Median :   7.7  
+##  Mean   : 18.69            Mean   : 97032.5               Mean   :  20.0  
+##  3rd Qu.:  8.40            3rd Qu.:194000.0               3rd Qu.:  11.0  
+##  Max.   :580.00            Max.   :194000.0               Max.   :3300.0  
+##  NA&#39;s   :21120             NA&#39;s   :21318                  NA&#39;s   :16052   
+##  no_sex_maturity_d
+##  Min.   :   33.0  
+##  1st Qu.:  365.3  
+##  Median :  913.1  
+##  Mean   : 1604.5  
+##  3rd Qu.: 2008.9  
+##  Max.   :14610.0  
+##  NA&#39;s   :20860</code></pre>
+<pre class="r"><code>#check strange 0&#39;s in adult_body_mass_g &amp; no_sex_body_mass_g
+amniota_no_na %&gt;%
+  filter(adult_body_mass_g &lt;= 0.1 | no_sex_body_mass_g &lt;= 0.1) %&gt;%
+  select (adult_body_mass_g, no_sex_body_mass_g)</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   adult_body_mass_g no_sex_body_mass_g
+##               &lt;dbl&gt;              &lt;dbl&gt;
+## 1               0.1                0.1</code></pre>
+<pre class="r"><code>#Looks good.</code></pre>
+<pre class="r"><code>#checking lowest values of birth_or_hatching_weight_g
+amniota_no_na %&gt;%
+  filter(birth_or_hatching_weight_g &lt; 0.01) %&gt;%
+  select (birth_or_hatching_weight_g)</code></pre>
+<pre><code>## # A tibble: 4 × 1
+##   birth_or_hatching_weight_g
+##                        &lt;dbl&gt;
+## 1                     0.005 
+## 2                     0.005 
+## 3                     0.0097
+## 4                     0.0043</code></pre>
+<pre class="r"><code>#Looks good</code></pre>
+<pre class="r"><code>#checking strange negative values for female_maturity_d
+amniota_no_na %&gt;%
+  filter(female_maturity_d &lt; 0) %&gt;%
+  select (female_maturity_d)</code></pre>
+<pre><code>## # A tibble: 4 × 1
+##   female_maturity_d
+##               &lt;dbl&gt;
+## 1           -30259.
+## 2           -30259.
+## 3           -30259.
+## 4           -30259.</code></pre>
+<pre class="r"><code>#replace -30258.71100 with NA
+amniota_no_na &lt;- amniota_no_na %&gt;%
+  mutate(female_maturity_d=na_if(female_maturity_d, -30258.71100))</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>How many total NA’s are in the data set? Use the package
 <code>naniar</code> to produce a summary, including percentages, of
-missing data in each column for the <code>amniota</code> data.</p></li>
-<li><p>Double check your replacement using <code>summary</code>. Do you
-see any other potential issues? If so, fix them.</p></li>
-<li><p>Use <code>naniar</code> to visualize the number of NA’s in each
-variable. Which variables have the most NA’s?</p></li>
-<li><p>Calculate the number of NAs in the <code>egg_mass_g</code> column
+missing data in each column for the <code>amniota</code> data.</li>
+</ol>
+<pre class="r"><code>library(naniar)
+amniota_no_na %&gt;%
+  miss_var_summary() %&gt;%
+  summarize(n_miss_total = sum(n_miss))</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   n_miss_total
+##          &lt;int&gt;
+## 1       528200</code></pre>
+<pre class="r"><code>#There are 528,200 NAs in the data set.
+
+amniota_no_na %&gt;%
+  miss_var_summary()</code></pre>
+<pre><code>## # A tibble: 36 × 3
+##    variable                       n_miss pct_miss
+##    &lt;chr&gt;                           &lt;int&gt;    &lt;num&gt;
+##  1 subspecies                      21322    100  
+##  2 female_body_mass_at_maturity_g  21318    100.0
+##  3 female_svl_at_maturity_cm       21120     99.1
+##  4 fledging_mass_g                 21111     99.0
+##  5 male_svl_cm                     21040     98.7
+##  6 no_sex_maturity_d               20860     97.8
+##  7 egg_width_mm                    20727     97.2
+##  8 egg_length_mm                   20702     97.1
+##  9 weaning_weight_g                20258     95.0
+## 10 female_svl_cm                   20242     94.9
+## # ℹ 26 more rows</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Double check your replacement using <code>summary</code>. Do you see
+any other potential issues? If so, fix them.</li>
+</ol>
+<pre class="r"><code>#just in case there are hidden issues in character columns
+amniota_no_na &lt;- amniota_no_na %&gt;%
+  replace_with_na_all(condition = ~.x %in% c(common_na_strings))</code></pre>
+<pre class="r"><code>amniota_no_na %&gt;%
+  summary()</code></pre>
+<pre><code>##     class              order              family             genus          
+##  Length:21322       Length:21322       Length:21322       Length:21322      
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##                                                                             
+##    species            subspecies    common_name        female_maturity_d
+##  Length:21322       Min.   : NA     Length:21322       Min.   :  23.81  
+##  Class :character   1st Qu.: NA     Class :character   1st Qu.: 289.00  
+##  Mode  :character   Median : NA     Mode  :character   Median : 365.12  
+##                     Mean   :NaN                        Mean   : 726.85  
+##                     3rd Qu.: NA                        3rd Qu.: 819.34  
+##                     Max.   : NA                        Max.   :9131.25  
+##                     NA&#39;s   :21322                      NA&#39;s   :17853    
+##  litter_or_clutch_size_n litters_or_clutches_per_y adult_body_mass_g  
+##  Min.   :  0.900         Min.   : 0.120            Min.   :        0  
+##  1st Qu.:  2.000         1st Qu.: 1.000            1st Qu.:       15  
+##  Median :  2.800         Median : 1.050            Median :       44  
+##  Mean   :  3.826         Mean   : 1.752            Mean   :    37493  
+##  3rd Qu.:  4.150         3rd Qu.: 2.000            3rd Qu.:      238  
+##  Max.   :156.000         Max.   :52.000            Max.   :149000000  
+##  NA&#39;s   :8244            NA&#39;s   :16374             NA&#39;s   :4645       
+##  maximum_longevity_y  gestation_d        weaning_d      
+##  Min.   :  0.0833    Min.   :   5.00   Min.   :   1.94  
+##  1st Qu.:  6.0000    1st Qu.:  29.91   1st Qu.:  27.75  
+##  Median : 12.3083    Median :  63.92   Median :  51.60  
+##  Mean   : 16.4657    Mean   : 105.28   Mean   : 113.05  
+##  3rd Qu.: 22.0000    3rd Qu.: 151.88   3rd Qu.: 129.83  
+##  Max.   :211.0000    Max.   :7396.92   Max.   :1826.25  
+##  NA&#39;s   :15822       NA&#39;s   :18926     NA&#39;s   :19279    
+##  birth_or_hatching_weight_g weaning_weight_g      egg_mass_g      
+##  Min.   :0.000e+00          Min.   :9.000e-01   Min.   :   0.218  
+##  1st Qu.:1.300e+00          1st Qu.:1.320e+01   1st Qu.:   2.100  
+##  Median :5.890e+00          Median :4.310e+01   Median :   5.100  
+##  Mean   :4.480e+03          Mean   :4.139e+04   Mean   :  22.252  
+##  3rd Qu.:4.385e+01          3rd Qu.:8.503e+02   3rd Qu.:  20.100  
+##  Max.   :2.250e+06          Max.   :1.700e+07   Max.   :1500.000  
+##  NA&#39;s   :17779              NA&#39;s   :20258       NA&#39;s   :15907     
+##   incubation_d     fledging_age_d   longevity_y       male_maturity_d  
+##  Min.   :   2.00   Min.   :  1.0   Min.   :  0.0833   Min.   :  30.44  
+##  1st Qu.:  17.00   1st Qu.: 16.5   1st Qu.:  5.5000   1st Qu.: 365.00  
+##  Median :  29.25   Median : 27.5   Median : 10.7000   Median : 365.25  
+##  Mean   :  46.67   Mean   : 36.8   Mean   : 13.5209   Mean   : 787.16  
+##  3rd Qu.:  59.50   3rd Qu.: 46.0   3rd Qu.: 18.2000   3rd Qu.: 913.00  
+##  Max.   :1762.00   Max.   :345.0   Max.   :177.0000   Max.   :9131.25  
+##  NA&#39;s   :17682     NA&#39;s   :19478   NA&#39;s   :15822      NA&#39;s   :19278    
+##  inter_litter_or_interbirth_interval_y female_body_mass_g  male_body_mass_g   
+##  Min.   :0.0465                        Min.   :      0.3   Min.   :      0.3  
+##  1st Qu.:0.3184                        1st Qu.:     14.0   1st Qu.:     16.5  
+##  Median :0.9993                        Median :     40.7   Median :     48.4  
+##  Mean   :0.9067                        Mean   :   2075.8   Mean   :   6196.8  
+##  3rd Qu.:1.0000                        3rd Qu.:    220.0   3rd Qu.:    245.5  
+##  Max.   :4.8467                        Max.   :3700000.0   Max.   :4545000.0  
+##  NA&#39;s   :19904                         NA&#39;s   :14113       NA&#39;s   :14679      
+##  no_sex_body_mass_g   egg_width_mm    egg_length_mm    fledging_mass_g  
+##  Min.   :        0   Min.   :  2.50   Min.   :  2.50   Min.   :   4.85  
+##  1st Qu.:       13   1st Qu.:  8.00   1st Qu.: 10.94   1st Qu.:  14.60  
+##  Median :       35   Median : 13.00   Median : 19.98   Median :  24.80  
+##  Mean   :    68952   Mean   : 22.99   Mean   : 36.40   Mean   : 452.27  
+##  3rd Qu.:      164   3rd Qu.: 35.90   3rd Qu.: 58.92   3rd Qu.: 107.00  
+##  Max.   :136000000   Max.   :125.00   Max.   :455.00   Max.   :9992.00  
+##  NA&#39;s   :11663       NA&#39;s   :20727    NA&#39;s   :20702    NA&#39;s   :21111    
+##   adult_svl_cm      male_svl_cm     female_svl_cm      birth_or_hatching_svl_cm
+##  Min.   :   1.79   Min.   :  1.57   Min.   :   1.800   Min.   :  0.400         
+##  1st Qu.:   9.50   1st Qu.: 21.41   1st Qu.:   5.756   1st Qu.:  2.450         
+##  Median :  18.50   Median : 35.85   Median :   8.150   Median :  3.300         
+##  Mean   :  38.20   Mean   : 50.44   Mean   :  20.609   Mean   : 12.099         
+##  3rd Qu.:  40.50   3rd Qu.: 63.39   3rd Qu.:  17.721   3rd Qu.:  5.256         
+##  Max.   :3049.00   Max.   :315.20   Max.   :1125.000   Max.   :759.999         
+##  NA&#39;s   :14274     NA&#39;s   :21040    NA&#39;s   :20242      NA&#39;s   :20085           
+##  female_svl_at_maturity_cm female_body_mass_at_maturity_g no_sex_svl_cm   
+##  Min.   :  2.85            Min.   :    30.0               Min.   :   1.7  
+##  1st Qu.:  4.90            1st Qu.:    82.5               1st Qu.:   5.7  
+##  Median :  6.00            Median : 97050.0               Median :   7.7  
+##  Mean   : 18.69            Mean   : 97032.5               Mean   :  20.0  
+##  3rd Qu.:  8.40            3rd Qu.:194000.0               3rd Qu.:  11.0  
+##  Max.   :580.00            Max.   :194000.0               Max.   :3300.0  
+##  NA&#39;s   :21120             NA&#39;s   :21318                  NA&#39;s   :16052   
+##  no_sex_maturity_d
+##  Min.   :   33.0  
+##  1st Qu.:  365.3  
+##  Median :  913.1  
+##  Mean   : 1604.5  
+##  3rd Qu.: 2008.9  
+##  Max.   :14610.0  
+##  NA&#39;s   :20860</code></pre>
+<pre class="r"><code>#No more potential issues found.</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Use <code>naniar</code> to visualize the number of NA’s in each
+variable. Which variables have the most NA’s?</li>
+</ol>
+<pre class="r"><code>amniota_no_na %&gt;%
+  miss_var_summary() %&gt;%
+  arrange(desc(n_miss))</code></pre>
+<pre><code>## # A tibble: 36 × 3
+##    variable                       n_miss pct_miss
+##    &lt;chr&gt;                           &lt;int&gt;    &lt;num&gt;
+##  1 subspecies                      21322    100  
+##  2 female_body_mass_at_maturity_g  21318    100.0
+##  3 female_svl_at_maturity_cm       21120     99.1
+##  4 fledging_mass_g                 21111     99.0
+##  5 male_svl_cm                     21040     98.7
+##  6 no_sex_maturity_d               20860     97.8
+##  7 egg_width_mm                    20727     97.2
+##  8 egg_length_mm                   20702     97.1
+##  9 weaning_weight_g                20258     95.0
+## 10 female_svl_cm                   20242     94.9
+## # ℹ 26 more rows</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Calculate the number of NAs in the <code>egg_mass_g</code> column
 sorted by taxonomic class; i.e. how many NA’s are present in the
 <code>egg_mass_g</code> column in birds, mammals, and reptiles? Does
 this results make sense biologically? How do these results affect your
-interpretation of NA’s?</p></li>
+interpretation of NA’s?</li>
 </ol>
+<pre class="r"><code>amniota_no_na %&gt;%
+  group_by(class) %&gt;%
+  select(class, egg_mass_g) %&gt;%
+  miss_var_summary() %&gt;%
+  arrange(desc(pct_miss))</code></pre>
+<pre><code>## # A tibble: 3 × 4
+## # Groups:   class [3]
+##   class    variable   n_miss pct_miss
+##   &lt;chr&gt;    &lt;chr&gt;       &lt;int&gt;    &lt;num&gt;
+## 1 Mammalia egg_mass_g   4953    100  
+## 2 Reptilia egg_mass_g   6040     92.0
+## 3 Aves     egg_mass_g   4914     50.1</code></pre>
+<pre class="r"><code>#Having 100% NA&#39;s for egg_mass_g for mammals makes sense (assuming no platypus or echidnas in the data).
+#92% NAs for egg_mass_g of reptiles is a bit of a concern. I&#39;d have to spend time looking at the specific species list, as some don&#39;t lay eggs or guard their clutches.
+#50.1% for birds is understandable as they all guard their nests &amp; can be out of reach. So yes, they have eggs but good luck getting to them.
+#These results tell me NA&#39;s can be used to get an idea of how detailed (or not detailed) people were in their data collecting. NAs will sometimes reflect the challenges of collecting certain data.</code></pre>
 </div>
 <div id="knit-and-upload" class="section level2">
 <h2>Knit and Upload</h2>
