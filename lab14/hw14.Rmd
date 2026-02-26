@@ -78,7 +78,7 @@ ggmap(map)+
 ```
 
 5. Build the same map (fatalities only), but this time make it interactive using `leaflet`. Also, color the points red.  
-```{r}
+```{r, eval=F, echo=T}
 library(shiny)
 
 ui <- fluidPage(
