@@ -1,0 +1,287 @@
+---
+title: "Midterm 2 W26"
+author: "Arlette Hall"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: spacelab
+    toc: no
+---
+
+## Instructions
+This is an in-person exam. Your exam must be complete and uploaded to Gradescope by 2:00p.  
+
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code must be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run. Be sure to add your name to the author header above. 
+
+Your code must knit in order to be considered. If you are stuck and cannot answer a question, then comment out your code and knit the document. You may use your notes, labs, and homework to help you complete this exam. Do not use any other resources- including AI assistance or other students' work.  
+
+Don't forget to answer any questions that are asked in the prompt! Each question must be coded; it cannot be answered by a sort in a spreadsheet or a written response only.  
+
+For all plots you create, a title and clearly labeled axes must be provided.  
+
+Be sure to push your completed midterm to your repository and upload the document to Gradescope. _Incorrectly uploading the exam to Gradescope will result in a 5 point deduction._ This exam is worth 50 points. 
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(naniar)
+library(ggmap)
+library(lubridate)
+library(shiny)
+``` 
+
+## API Key
+Since you will build a map as part of the exam, take a moment to register your API key. You may need to look up your [stadia maps](https://client.stadiamaps.com/dashboard/overview) API key online (please do that now).
+```{r}
+register_stadiamaps("1ad11010-4c59-42b0-a160-0dab4e61577f", write = FALSE)
+```
+
+## About the data
+This study is focused on the fasting behavior of polar bears in the Southern Beaufort (SB) and Chukchi seas (CS). The data were collected from 1983-2017 and include measurements of blood urea nitrogen (BUN) and creatinine, which are used to calculate a ratio that indicates whether a bear is fasting or not. The original paper is included in the data folder. _It may help to quickly read the abstract before starting the exam._  
+
+The data are from: Rode, K.D., Wilson, R.R., Douglas, D.C., Muhlenbruch, V., Atwood, T.C., Regehr, E.V., Richardson, E.S., Pilfold, N.W., Derocher, A.E., Durner, G.M., Stirling, I., Amstrup, S.C., St. Martin, M., Pagano, A.M., and others, 2017, Spring fasting behavior in a marine apex predator provides an index of ecosystem productivity: Global Change Biology, v. 24, no. 1, p. 410–423, https://doi.org/10.1111/gcb.13933.  
+
+## Data resources
+- https://data.usgs.gov/datacatalog/data/USGS:ASC141
+- https://www.sciencebase.gov/catalog/item/61a1a9e7d34eb622f69743d2
+
+## The variables include:  
+- `bear_id`: A unique number given to each bear.    
+- `capture_date`: The data when the bear was tranquilized and assessed.  
+- `popn`: The population to which the bear belongs.  
+- `sex `: Sex of each bear.    
+- `age_class`: The age class of each bear (A=adult, S=subadult).   
+- `mating`: Whether or not the bear is pursuing a mate.  
+- `denning`: Whether or not the bear denned last year.  
+- `lat`: Latitude where the bear was located.  
+- `long`: Longitude where the bear was located.  
+- `urea_nitrogen`: Concentration of urea nitrogen.  
+- `creatinine`: Concentration of creatinine.  
+
+## Load the data
+Run the code chunk below to load the data, clean the names, and do some tidying.
+```{r message=FALSE, warning=FALSE}
+polar_bears <- 
+  read_csv("data/polarBear_serumUreaCreatinine_beaufortChukchi_rode.csv") %>% 
+  clean_names() %>% 
+  select(-den_method, -no_cubs, -cub_age) %>%
+  filter(age_class==c("A", "S")) %>% 
+  mutate(sex=toupper(sex), 
+         age_class=toupper(age_class))
+```
+
+1. (2 points) List the variable names and use a summary function to get an idea of the data structure.
+```{r}
+names(polar_bears)
+```
+
+```{r}
+glimpse(polar_bears)
+```
+2. (3 points) How are NA's represented and where are they distributed in the variables? Use the `naniar` package to visualize the distribution of NA's in the data and replace any alternative representations of NA with actual NA values.
+```{r}
+polar_bears %>%
+  miss_var_summary()
+#Nothing showing up.
+```
+
+```{r}
+#checking for NAs in numeric categories
+polar_bears %>%
+  select(bear_id, capture_date, lat, long, urea_nitrogen, creatinine) %>%
+  summary()
+#Not seeing any in numeric variables.
+```
+
+```{r}
+#Handle character columns
+polar_bears <- polar_bears %>%
+  replace_with_na_all(condition = ~.x %in% c(common_na_strings)) %>%
+  mutate(sex=na_if(sex, "unknown"),
+         age_class=na_if(age_class, "unknown"),
+         mating=na_if(mating, "unknown"),
+         denning=na_if(denning, "unknown"))
+```
+
+```{r}
+#Recheck for NAs
+polar_bears %>%
+  miss_var_summary()
+```
+
+3. (6 points) Is sampling even for both sexes? Make a count the shows the number of males and females sampled by population and make a plot to visualize the counts.
+```{r}
+#count females
+polar_bears %>%
+  filter(sex == "F") %>%
+  summarize(n_females = n())
+```
+
+```{r}
+# count males
+polar_bears %>%
+  filter(sex == "M") %>%
+  summarize(n_males = n())
+
+#Sampling is not entirely even across sexes. 
+```
+
+```{r}
+#count number of males and females by population
+polar_bears %>%
+  group_by(popn, sex) %>%
+  summarize(n_count = n(), .groups='keep') %>%
+  arrange(desc(n_count))
+```
+```{r}
+#plot number of males and females by population
+polar_bears %>%
+  ggplot(aes(x=sex, fill=popn))+
+  geom_bar(position="dodge", na.rm=T)+
+  labs(x="Gender", y=NULL,
+       title="Count of Polar Bears by Population and Gender",
+       fill="Population")+
+  theme(plot.title=element_text(size=rel(1.2), hjust=0.5, face="bold"),
+        axis.title.x=element_text(face="bold"))
+```
+
+4. (6 points) How many bears were sampled in each year for both populations? Make a line plot(s) to visualize sampling by year for both populations. (hint: you will need to pull apart the date to get the year in its own column)
+```{r}
+#separate capture_date
+polar_bears <- polar_bears %>%
+  separate(capture_date, into=c("year", "month", "day"), sep="-")
+```
+
+```{r}
+#plot number of bears by population & year
+#polar_bears %>%
+#  group_by(year, popn) %>%
+#  summarize(n_count = n(), .groups='keep') %>%
+#  ggplot(aes(x=year, y=n_count))+
+#  geom_line(color=popn)+
+#  labs(x="Year", y=NULL,
+#       title="Count of Polar Bears by Population and Year",
+#       color="Population")+
+#  theme(plot.title=element_text(size=rel(1.2), hjust=0.5, face="bold"),
+#        axis.title.x=element_text(face="bold")) %>%
+#  scale_x_continuous(breaks=seq(1983, 2016, by=10))
+```
+
+5. (2 points) What are the min, median, mean, and max values for `urea_nitrogen` and `creatinine`?
+```{r}
+polar_bears %>%
+  summarize(min_urea_nitrogen = min(urea_nitrogen),
+            med_urea_nitrogen = median(urea_nitrogen),
+            mean_urea_nitrogen = mean(urea_nitrogen),
+            max_urea_nitrogen = max(urea_nitrogen),
+            min_creatinine = min(creatinine),
+            med_creatinine = median(creatinine),
+            mean_creatinine = mean(creatinine),
+            max_creatinine = max(creatinine))
+```
+
+6. (3 points) As explained above, the ratio of `urea_nitrogen` to `creatinine` is used as an index of fasting. To calculate the ratio, we need to multiply `urea_nitrogen` by 0.466, then divide by `creatinine`. Create a new variable called `un_creat_ratio` that contains this calculation.
+```{r}
+polar_bears <- polar_bears %>%
+  tibble(un_creat_ratio = (urea_nitrogen*0.466)/creatinine)
+```
+
+
+7. (4 points) The authors of the study categorized bears as fasting if their `un_creat_ratio` was less than or equal to 10. Use `case_when()` to create a new variable called `fasting` that categorizes bears as fasting or not.
+```{r}
+polar_bears <- polar_bears %>%
+  tibble(fasting = "yes")
+
+#polar_bears %>%
+#  if(un_creat_ratio > 10){
+#    mutate(fasting == "no")
+#  }
+```
+
+
+8. (6 points) The authors found that the number of fasting bears increased in the SB population but decreased in the CS population. Make a plot(s) that shows the number of fasting bears by year for both populations to visualize this trend.
+```{r}
+#polar_bears %>%
+#  filter(fasting == "yes") %>%
+#  group_by(year, popn) %>%
+#  summarize(n_fast = n(), .groups='keep') %>%
+#  ggplot(aes(x=year, y = n_fast, color=popn))+
+#  geom_point(na.rm=T)+
+#  geom_smooth(method=lm, se=T, na.rm=T)+
+#  labs(x="Year", y=NULL,
+#       title="Count of Fasting Polar Bears by Population and Year",
+#       fill="Population")+
+#  theme(plot.title=element_text(size=rel(1.2), hjust=0.5, face="bold"),
+#        axis.title.x=element_text(face="bold"))
+```
+
+
+9. (8 points) Where are the polar bears used in this study located? Make a static (not leaflet) distribution map that shows the locations of  bears by population. (hint: use `color=popn` in the `aes()` of `geom_point()`)
+```{r}
+#get mins and maxes
+polar_bears  %>%
+  select(lat, long) %>%
+  summary()
+
+#set latitude and longitude ranges, using min's & max's
+lat <- c(62.46, 72.70)
+long <- c(-172.2, -134.8)
+#make bbox with 3% (f=0.03) buffer
+bbox <- make_bbox(long, lat, f=0.03)
+
+#load map
+map <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom = 6)
+ggmap(map)
+```
+
+```{r}
+#plot
+#ggmap(map)+
+#  geom_point(data=polar_bears,
+#             aes(long, lat), size=0.5, color="black", shape=popn, alpha=0.6)+
+#  labs(x="Longitude", y="Latitude", title="Polar Bears by Population")+
+#  theme(plot.title=element_text(size=rel(1.2), hjust=0.5, face="bold"))
+```
+
+10. (10 points) Build a simple shiny app that shows the range of `un_creat_ratio` values for both populations. The user should be able to select the fill variable and choose between sex, mating, age_class, denning, and fasting. Please use the code chunk below so that your exam knits.
+```{r, eval=F, echo=T}
+library(leaflet)
+
+ui <- fluidPage(
+  radioButtons("x",
+              "Select Variable of Interest:",
+              choices = c("sex",
+                          "mating",
+                          "age_class",
+                          "denning",
+                          "fasting"),
+              selected = "sex"),
+  plotOutput("plot",
+             width = "600px",
+             height = "500px")
+)
+
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    
+      ggplot(data=polar_bears,
+                 aes(x=popn, y=un_creat_ratio, fill=.data[[input$x]]))+
+      geom_boxplot(na.rm=T)+
+      labs(x="Population", y="Urea-Creatinine Ratio", title="Urea-Creatinine Ratio by Population")+
+      theme(plot.title=element_text(size=rel(1.8), hjust=0.5, face="bold"),
+            axis.title.x=element_text(face="bold"),
+            axis.title.y=element_text(face="bold"))
+  })
+  
+}
+
+shinyApp(ui, server)
+```
+
+## Submit the Midterm
+1. Save your work and knit the .rmd file.  
+2. Open the .html file and "print" it to a .pdf file in Google Chrome (not Safari).    
+3. Go to the class Canvas page and open Gradescope.  
+4. Submit your .pdf file to the midterm assignment- be sure to assign the pages to the correct questions.  
+5. Commit and push your work to your repository. 
