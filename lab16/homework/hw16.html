@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Your Name Here" />
+<meta name="author" content="Arlette Hall" />
 
-<meta name="date" content="2026-03-05" />
+<meta name="date" content="2026-03-10" />
 
 <title>Homework YY</title>
 
@@ -375,8 +375,8 @@ display: none;
 
 
 <h1 class="title toc-ignore">Homework YY</h1>
-<h4 class="author">Your Name Here</h4>
-<h4 class="date">2026-03-05</h4>
+<h4 class="author">Arlette Hall</h4>
+<h4 class="date">2026-03-10</h4>
 
 </div>
 
@@ -426,46 +426,203 @@ database.</p>
 <code>goi_01.txt</code> file into R using the Biostrings package. Store
 this in an object called <code>query_seq</code>.What type sequence is
 this? (DNA, RNA or Protien) </strong></p>
+<pre class="r"><code>#skipped per instruction</code></pre>
 <p><strong>2.Perform a blastx search using <code>goi_01.txt</code> as
-the query and the “core_nt” database. Download the cluster table results
-in CSV format, change the name to “goi_01_blastx.csv” and store in the
-homework/data folder. Read the csv file into R and clean the column
-names. Save the cleaned data frame as goi_01_blastx.</strong></p>
+the query and the “nr_cluster_seq” database. Download the cluster table
+results in CSV format, change the name to “goi_01_blastx.csv” and store
+in the homework/data folder. Read the csv file into R and clean the
+column names. Save the cleaned data frame as goi_01_blastx.</strong></p>
+<pre class="r"><code>goi_01_blastx &lt;- read.csv(&quot;data/goi_01_blastx.csv&quot;) %&gt;%
+  clean_names()</code></pre>
+<pre class="r"><code>glimpse(goi_01_blastx)</code></pre>
+<pre><code>## Rows: 101
+## Columns: 11
+## $ cluster_composition     &lt;chr&gt; &quot;8 member(s) 4 organism(s)&quot;, &quot;11 member(s) 6 o…
+## $ cluster_ancestor        &lt;chr&gt; &quot;enterobacteria&quot;, &quot;enterobacteria&quot;, &quot;root&quot;, &quot;e…
+## $ representative_sequence &lt;chr&gt; &quot;minor capsid protein, partial [Yersinia pesti…
+## $ scientific_name         &lt;chr&gt; &quot;Enterobacterales&quot;, &quot;Enterobacteriaceae&quot;, &quot;roo…
+## $ max_score               &lt;dbl&gt; 215, 211, 210, 196, 194, 192, 192, 190, 185, 1…
+## $ total_score             &lt;dbl&gt; 215, 258, 256, 242, 194, 236, 237, 236, 232, 2…
+## $ query_cover             &lt;chr&gt; &quot;81%&quot;, &quot;99%&quot;, &quot;99%&quot;, &quot;99%&quot;, &quot;74%&quot;, &quot;99%&quot;, &quot;99%…
+## $ e_value                 &lt;dbl&gt; 0.00000000000000000000000000000000000000000000…
+## $ per_ident               &lt;dbl&gt; 100.00, 97.12, 96.15, 83.65, 100.00, 84.62, 84…
+## $ acc_len                 &lt;int&gt; 107, 127, 127, 127, 95, 127, 127, 127, 127, 12…
+## $ accession               &lt;chr&gt; &quot;=HYPERLINK(\&quot;https://www.ncbi.nlm.nih.gov/pro…</code></pre>
 <p><strong>3.Display the top 10 blastx hits, based on e_value, for this
 blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster
 Representative Sequence, Max Score, Query Cover, E value and Percent
 Identity)</strong></p>
+<pre class="r"><code>#smaller e_value is better, top 10 hits = 10 smallest e_value&#39;s
+goi_01_blastx %&gt;%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %&gt;%
+  filter(e_value != &quot;NA&quot;) %&gt;%
+  slice_min(e_value, n=10)</code></pre>
+<pre><code>##                                                                     e_value
+## 1  0.0000000000000000000000000000000000000000000000000000000000000000000006
+## 2  0.0000000000000000000000000000000000000000000000000000000000000000000400
+## 3  0.0000000000000000000000000000000000000000000000000000000000000000000900
+## 4  0.0000000000000000000000000000000000000000000000000000000000000300000000
+## 5  0.0000000000000000000000000000000000000000000000000000000000000700000000
+## 6  0.0000000000000000000000000000000000000000000000000000000000010000000000
+## 7  0.0000000000000000000000000000000000000000000000000000000000010000000000
+## 8  0.0000000000000000000000000000000000000000000000000000000000090000000000
+## 9  0.0000000000000000000000000000000000000000000000000000000010000000000000
+## 10 0.0000000000000000000000000000000000000000000000000000000030000000000000
+##            scientific_name     cluster_ancestor
+## 1         Enterobacterales       enterobacteria
+## 2       Enterobacteriaceae       enterobacteria
+## 3                     root                 root
+## 4               Salmonella       enterobacteria
+## 5                 Bacteria             bacteria
+## 6  Enterobacter hormaechei CDC Enteric Group 75
+## 7   Buttiauxella sp. WJP83       enterobacteria
+## 8   Escherichia fergusonii       enterobacteria
+## 9         Escherichia coli              E. coli
+## 10      Enterobacteriaceae       enterobacteria
+##                             representative_sequence max_score query_cover
+## 1   minor capsid protein, partial [Yersinia pestis]       215         81%
+## 2    minor capsid protein [Enterobacter hormaechei]       211         99%
+## 3           minor capsid protein [Escherichia coli]       210         99%
+## 4        minor capsid protein [Salmonella enterica]       196         99%
+## 5   minor capsid protein, partial [Yersinia pestis]       194         74%
+## 6    hypothetical protein [Enterobacter hormaechei]       192         99%
+## 7     minor capsid protein [Buttiauxella sp. WJP83]       192         99%
+## 8     minor capsid protein [Escherichia fergusonii]       190         99%
+## 9           minor capsid protein [Escherichia coli]       185         99%
+## 10 minor capsid protein [Enterobacter cancerogenus]       184         99%
+##    per_ident
+## 1     100.00
+## 2      97.12
+## 3      96.15
+## 4      83.65
+## 5     100.00
+## 6      84.62
+## 7      84.62
+## 8      81.73
+## 9      80.77
+## 10     79.81</code></pre>
 <p><strong>4. create a plot that shows the different in percent identity
 for each Scientific Name of the top 10 blastx hits. Make sure to label
 your axes and give your plot a title.</strong></p>
+<pre class="r"><code>goi_01_blastx %&gt;%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %&gt;%
+  filter(e_value != &quot;NA&quot;) %&gt;%
+  slice_min(e_value, n=10) %&gt;%
+  group_by(scientific_name) %&gt;%
+  summarize(n = n(), per_ident = (sum(per_ident)/n))</code></pre>
+<pre><code>## # A tibble: 9 × 3
+##   scientific_name             n per_ident
+##   &lt;chr&gt;                   &lt;int&gt;     &lt;dbl&gt;
+## 1 Bacteria                    1     100  
+## 2 Buttiauxella sp. WJP83      1      84.6
+## 3 Enterobacter hormaechei     1      84.6
+## 4 Enterobacterales            1     100  
+## 5 Enterobacteriaceae          2      88.5
+## 6 Escherichia coli            1      80.8
+## 7 Escherichia fergusonii      1      81.7
+## 8 Salmonella                  1      83.6
+## 9 root                        1      96.2</code></pre>
+<pre class="r"><code>goi_01_blastx %&gt;%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %&gt;%
+  filter(e_value != &quot;NA&quot;) %&gt;%
+  slice_min(e_value, n=10) %&gt;%
+  group_by(scientific_name) %&gt;%
+  summarize(n = n(), per_ident = (sum(per_ident)/n)) %&gt;%
+  ggplot(mapping=aes(x = reorder(scientific_name, per_ident), y = per_ident))+
+  geom_col(fill = &quot;green&quot;, color = &quot;black&quot;, na.rm = T)+
+  coord_flip()+
+  labs(x = &quot;Scientific Name&quot;, y = &quot;Percent Identity&quot;,
+       title = &quot;Top 10 BlastX Hits: Scientific Name vs Percent Identity&quot;)</code></pre>
+<p><img role="img" aria-label src="data:image/png;base64,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" alt width="672" /></p>
 <p><strong>5 Perform a blastn search using <code>goi_01.txt</code> as
 the query and the “core_nt” database. Download the alignment description
 in CSV format, change the name to “goi_01_blastn.csv” and store in the
 homework/data folder. Read the csv file into R and clean the column
 names. Save the cleaned data frame as goi_01_blastn.</strong></p>
+<pre class="r"><code>goi_01_blastn &lt;- read_csv(&quot;data/goi_01_blastn.csv&quot;) %&gt;%
+  clean_names()</code></pre>
+<pre><code>## Rows: 100 Columns: 9
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (4): Description, Scientific Name, Query Cover, Accession
+## dbl (5): Max Score, Total Score, E value, Per. ident, Acc. Len
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>glimpse(goi_01_blastn)</code></pre>
+<pre><code>## Rows: 100
+## Columns: 9
+## $ description     &lt;chr&gt; &quot;Yersinia pestis strain 86025 plasmid pMT1, complete s…
+## $ scientific_name &lt;chr&gt; &quot;Yersinia pestis&quot;, &quot;Yersinia pestis&quot;, &quot;Yersinia pestis…
+## $ max_score       &lt;dbl&gt; 688, 688, 688, 688, 688, 688, 688, 688, 688, 688, 688,…
+## $ total_score     &lt;dbl&gt; 688, 688, 688, 688, 688, 688, 688, 688, 688, 688, 688,…
+## $ query_cover     &lt;chr&gt; &quot;99%&quot;, &quot;99%&quot;, &quot;99%&quot;, &quot;100%&quot;, &quot;99%&quot;, &quot;100%&quot;, &quot;99%&quot;, &quot;99…
+## $ e_value         &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+## $ per_ident       &lt;dbl&gt; 99.21, 99.21, 99.21, 98.96, 99.21, 98.96, 99.21, 99.21…
+## $ acc_len         &lt;dbl&gt; 96210, 94251, 99286, 101744, 100988, 100935, 96206, 96…
+## $ accession       &lt;chr&gt; &quot;=HYPERLINK(\&quot;https://www.ncbi.nlm.nih.gov/nucleotide/…</code></pre>
 <p><strong>6. What was the top blastn hit, based on e_value, for this
 blastn search? (Include the Cluster Ancestor, Cluster, Representative
 Sequence, Max Score, Query Cover, E value, Percent Identity and
 Accession Link)</strong></p>
+<pre class="r"><code>#Cluster Ancestor, Cluster, Representative Sequence were not given in blastn.
+#I downloaded the Descriptions Table (CSV) off of BlastN and used the core_nt database.
+#Included description column incase it fulfills any missing columns.
+
+goi_01_blastn %&gt;%
+  select(e_value, description, max_score, query_cover, per_ident, accession)%&gt;%
+  arrange(desc(e_value)) %&gt;%
+  head(n=1)</code></pre>
+<pre><code>## # A tibble: 1 × 6
+##   e_value description                  max_score query_cover per_ident accession
+##     &lt;dbl&gt; &lt;chr&gt;                            &lt;dbl&gt; &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;    
+## 1       0 Yersinia pestis strain 8602…       688 99%              99.2 &quot;=HYPERL…</code></pre>
 <p><strong>7. Based on the blastx and blastn results, what do you think
 this gene is and what bacteria do you think it came from?</strong></p>
-<pre><code></code></pre>
+<pre class="r"><code>#gene: plasmid pMT1
+#bacteria: Yersinia pestis</code></pre>
 <p><strong>8. For the top blastn hit, click on the accession link for
 this bacteria and download the coding sequences as a FASTA Protein file.
 Read the fasta file into R using the Biostrings package and store it in
 an object called <code>goi_blastn_hit</code>.</strong></p>
+<pre class="r"><code>goi_blastn_hit &lt;- readDNAStringSet(&quot;data/goi_blastn_hit.fasta&quot;)</code></pre>
+<pre class="r"><code>head(goi_blastn_hit)</code></pre>
+<pre><code>## DNAStringSet object of length 1:
+##     width seq                                               names               
+## [1] 96210 ATGAAGGCTCTGATGGTCAGAAC...GAAAACCAGAAAGGTAAAAACAC CP177713.1 Yersin...</code></pre>
 <p><strong>9. From the same organism, identify 5 other annotated genes?
 Do these genes suggest about the biology or virulence of this
 bacterium?</strong> <em>Annotated genes can be found in the “CDS”
 section of the GenBank file. You can also find genes by going to summary
 page for the organism and looking at the “View annotated genes”
 section.</em></p>
+<pre class="r"><code>#Cannot find</code></pre>
 <p><strong>10. Now that you have an idea of this bacteria’s identity,
 what illness/disease do you think the patient has? What is the
 historical or public health significance of this disease? Based on the
 gene you identified, what role might this gene play in
 pathogenicity?</strong></p>
-<pre><code></code></pre>
+<pre><code>#Yersinia pestis causes the Black Death. I really hope they don&#39;t have that.
+#The Black Death is infamous for being one of the deadliest plagues in recorded human history.
+#I don&#39;t know anything about pathogenicity so I have no idea.</code></pre>
 </div>
 <div id="knit-and-upload" class="section level2">
 <h2>Knit and Upload</h2>

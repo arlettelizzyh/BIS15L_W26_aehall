@@ -50,62 +50,114 @@ You will use BLAST, a tool used in real clinical and research microbiology labs,
 
 **2.Perform a blastx search using `goi_01.txt` as the query and the "nr_cluster_seq" database. Download the cluster table results in CSV format, change the name to "goi_01_blastx.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastx.**
 ```{r}
-#in folder
+goi_01_blastx <- read.csv("data/goi_01_blastx.csv") %>%
+  clean_names()
 ```
 
 ```{r}
-
+glimpse(goi_01_blastx)
 ```
 
 **3.Display the top 10 blastx hits, based on e_value, for this blastx search? (Include the Scientific Name, Cluster Anscestor, Cluster Representative Sequence, Max Score, Query Cover, E value and Percent Identity)**
 ```{r}
-
+#smaller e_value is better, top 10 hits = 10 smallest e_value's
+goi_01_blastx %>%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %>%
+  filter(e_value != "NA") %>%
+  slice_min(e_value, n=10)
 ```
  
 
 **4. create a plot that shows the different in percent identity for each Scientific Name of the top 10 blastx hits. Make sure to label your axes and give your plot a title.**
 ```{r}
-
+goi_01_blastx %>%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %>%
+  filter(e_value != "NA") %>%
+  slice_min(e_value, n=10) %>%
+  group_by(scientific_name) %>%
+  summarize(n = n(), per_ident = (sum(per_ident)/n))
 ```
 
+```{r}
+goi_01_blastx %>%
+  select(e_value,
+         scientific_name,
+         cluster_ancestor,
+         representative_sequence,
+         max_score,
+         query_cover,
+         per_ident) %>%
+  filter(e_value != "NA") %>%
+  slice_min(e_value, n=10) %>%
+  group_by(scientific_name) %>%
+  summarize(n = n(), per_ident = (sum(per_ident)/n)) %>%
+  ggplot(mapping=aes(x = reorder(scientific_name, per_ident), y = per_ident))+
+  geom_col(fill = "green", color = "black", na.rm = T)+
+  coord_flip()+
+  labs(x = "Scientific Name", y = "Percent Identity",
+       title = "Top 10 BlastX Hits: Scientific Name vs Percent Identity")
+```
 
 **5 Perform a blastn search using `goi_01.txt` as the query and the "core_nt" database. Download the alignment description in CSV format, change the name to "goi_01_blastn.csv" and store in the homework/data folder. Read the csv file into R and clean the column names. Save the cleaned data frame as goi_01_blastn.**
 ```{r}
-#in folder
+goi_01_blastn <- read_csv("data/goi_01_blastn.csv") %>%
+  clean_names()
 ```
 
 ```{r}
-
+glimpse(goi_01_blastn)
 ```
 
 **6. What was the top blastn hit, based on e_value, for this blastn search? (Include the Cluster Ancestor, Cluster, Representative Sequence, Max Score, Query Cover, E value, Percent Identity and Accession Link)**
 ```{r}
+#Cluster Ancestor, Cluster, Representative Sequence were not given in blastn.
+#I downloaded the Descriptions Table (CSV) off of BlastN and used the core_nt database.
+#Included description column incase it fulfills any missing columns.
 
+goi_01_blastn %>%
+  select(e_value, description, max_score, query_cover, per_ident, accession)%>%
+  arrange(desc(e_value)) %>%
+  head(n=1)
 ```
 
 **7. Based on the blastx and blastn results, what do you think this gene is and what bacteria do you think it came from?**
-```{}
-
+```{r}
+#gene: plasmid pMT1
+#bacteria: Yersinia pestis
 ```
 
 **8. For the top blastn hit, click on the accession link for this bacteria and download the coding sequences as a FASTA Protein file. Read the fasta file into R using the Biostrings package and store it in an object called `goi_blastn_hit`.**
 ```{r}
-
+goi_blastn_hit <- readDNAStringSet("data/goi_blastn_hit.fasta")
 ```
 
 ```{r}
-
+head(goi_blastn_hit)
 ```
 
 **9. From the same organism, identify 5 other annotated genes? Do these genes suggest about the biology or virulence of this bacterium?** *Annotated genes can be found in the "CDS" section of the GenBank file. You can also find genes by going to summary page for the organism and looking at the "View annotated genes" section.*
 ```{r}
-
+#Cannot find
 ```
 
 
 **10. Now that you have an idea of this bacteria's identity, what illness/disease do you think the patient has? What is the historical or public health significance of this disease? Based on the gene you identified, what role might this gene play in pathogenicity?**
 ```{}
-
+#Yersinia pestis causes the Black Death. I really hope they don't have that.
+#The Black Death is infamous for being one of the deadliest plagues in recorded human history.
+#I don't know anything about pathogenicity so I have no idea.
 ```
 
 
